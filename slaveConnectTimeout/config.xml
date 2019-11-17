@@ -1,0 +1,46 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.35">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.74">
+    <script>// podTemplate change timeout
+podTemplate(yaml: &quot;&quot;&quot;
+kind: Pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    imagePullPolicy: IfNotPresent
+    command:
+    - /busybox/cat
+    tty: true
+&quot;&quot;&quot;, slaveConnectTimeout: &quot;1&quot;
+  ) {
+
+  node(POD_LABEL) {
+    stage(&apos;Timeout delay 1000ms&apos;) {
+      container(&apos;busybox&apos;) {
+        sh &apos;&apos;&apos;
+        sleep 2
+        echo Pod will timeout in 1000ms, should never reach here
+        &apos;&apos;&apos;
+      }
+    }
+  }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
