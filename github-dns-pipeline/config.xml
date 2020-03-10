@@ -1,0 +1,37 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.32">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.70">
+    <script>
+
+podTemplate(label: &apos;github-dns&apos;, containers: [
+  containerTemplate(name: &apos;maven&apos;, image: &apos;maven:3.6.2-jdk-8-slim&apos;, ttyEnabled: true, command: &apos;cat&apos;)
+  ]) {
+
+  node(&apos;github-dns&apos;) {
+    stage(&apos;Build a Maven project&apos;) {
+      git &apos;https://github.com/cbdchang/library-resources.git&apos;
+      container(&apos;maven&apos;) {
+          sh &apos;curl -v https://github.com&apos;
+          sh &apos;mvn --version&apos;
+      }
+    }
+  }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

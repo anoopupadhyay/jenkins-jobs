@@ -1,0 +1,28 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.32">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.70">
+    <script>podTemplate(label: &apos;inplace&apos;, containers: [
+  containerTemplate(name: &apos;jnlp&apos;, image: &apos;maven:3.6.2-jdk-8-slim&apos;, command: &apos;sh&apos;, args: &apos;/var/jenkins_config/jenkins-agent&apos;),
+  ], volumes: [
+        configMapVolume(mountPath: &apos;/var/jenkins_config&apos;, configMapName: &apos;jenkins-agent&apos;),
+        hostPathVolume(mountPath: &apos;/var/run/docker.sock&apos;, hostPath: &apos;/var/run/docker.sock&apos;)
+  ],) {
+
+  node(&apos;inplace&apos;) {
+    stage(&apos;Build a Maven project&apos;) {
+      container(&apos;jnlp&apos;) {
+          sh &apos;ls /var/run/docker.sock&apos;
+          sh &apos;mvn --version&apos;
+      }
+    }
+  }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
