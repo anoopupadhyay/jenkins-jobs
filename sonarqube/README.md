@@ -18,10 +18,10 @@ SonarQube Server installed, e.g. http://localhost:9000
 pipeline {
     agent any
     tools {
-        maven 'maven3';
+        maven 'maven3'
     }
     environment {
-        scannerHome = tool 'sonarqube4';
+        scannerHome = tool 'sonarqube4'
     }
     stages {
         stage ('Checkout') {
